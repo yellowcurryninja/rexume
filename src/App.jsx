@@ -1,3 +1,4 @@
+import { ShadowOverlay } from "./ShadowOverlay";
 import { useState, useEffect } from "react";
 
 // ─── Google Fonts ────────────────────────────────────────────────────────────
@@ -131,8 +132,9 @@ const css = `
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
     --font-display: 'Syne', sans-serif;
   }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); font-size: 13px; line-height: 1.7; }
+  html { scroll-behavior: smooth; width: 100%; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); font-size: 13px; line-height: 1.7; margin: 0; padding: 0; }
+  #root { width: 100%; }
   ::selection { background: var(--accent-dim); color: var(--accent); }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -277,7 +279,20 @@ const Hero = () => {
       display: "flex", alignItems: "center",
       padding: "100px clamp(20px,5vw,60px) 60px",
       position: "relative", overflow: "hidden",
+      width: "100%",
     }}>
+      <ShadowOverlay
+    color="rgb(3, 57, 12)"
+    animation={{ scale: 30, speed: 80 }}
+    style={{
+    position: "absolute",
+    top: 0, left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0,
+    pointerEvents: "none",
+  }}
+  />
       {/* Status panel top-right */}
       <div className="fade-in" style={{
         position: "absolute", top: 70, right: "clamp(20px,5vw,60px)",
