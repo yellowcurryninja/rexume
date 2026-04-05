@@ -15,7 +15,7 @@ const FontLoader = () => {
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const DATA = {
   name: "Fardin Farhan Ahmed",
-  handle: "fardinfarhan",
+  handle: "yellowcurryninja",
   role: "Cybersecurity Student & Aspiring Network Engineer",
   location: "Brisbane, QLD, Australia",
   email: "Fardin5215@gmail.com",
