@@ -23,8 +23,8 @@ const DATA = {
   location: "Brisbane, QLD, Australia",
   email: "Fardin5215@gmail.com",
   phone: "0426353763",
-  linkedin: "#",
-  github: "#",
+  linkedin: "https://www.linkedin.com/in/fardin-farhan-ahmed-60792a282/",
+  github: "https://github.com/yellowcurryninja",
   about:
     "Entry-level IT professional with hands-on experience supporting campus IT operations and building practical skills through a personal HomeLab running DNS, storage, and server services on Proxmox. Currently completing a Bachelor of Cyber Security at Griffith University while studying toward CCNA certification. I build tools, automate things that shouldn't require manual work, and care about how networks actually function under the hood.",
   skills: [
@@ -123,6 +123,11 @@ const css = `
   @media (max-width: 600px) {
     #hero { padding: 100px 24px 60px !important; }
     #hero h1 { font-size: clamp(28px, 8vw, 68px) !important; white-space: normal !important; }
+  }
+  @media (max-width: 600px) {
+  #hero { padding: 100px 24px 60px !important; }
+  #hero h1 { font-size: clamp(28px, 8vw, 68px) !important; white-space: normal !important; }
+  #hero .fade-up { width: 100%; }
   }
   :root {
     --bg: #080808;
@@ -247,7 +252,7 @@ const Nav = () => {
         <div style={{ display: "flex", gap: "28px" }} className="nav-desktop">
           {links.map(l => (
             <a key={l} href={`#${l}`} style={{
-              color: "var(--text-dim)", fontSize: "11px",
+              color: "var(--text-dim)", fontSize: "14px",
               letterSpacing: "0.1em", transition: "color 0.15s",
             }}
               onMouseEnter={e => e.target.style.color = "var(--text)"}
@@ -376,7 +381,7 @@ const Hero = () => {
       </div>
 
       <div style={{ maxWidth: "740px", width: "100%" }}>
-        <div className="fade-up" style={{ animationDelay: "0.1s", color: "var(--text-dim)", fontSize: "12px", marginBottom: "18px" }}>
+        <div className="fade-up" style={{ animationDelay: "0.1s", color: "var(--text-dim)", fontSize: "14px", marginBottom: "18px" }}>
           <span style={{ color: "var(--accent)" }}>$</span> whoami
         </div>
 
@@ -392,11 +397,11 @@ const Hero = () => {
 
         <div className="fade-up" style={{
           animationDelay: "0.3s",
-          fontSize: "13px", color: "var(--text)",
+          fontSize: "13px", color: "var(--text-muted)",
           marginBottom: "44px", minHeight: "22px",
-          display: "flex", alignItems: "center", gap: "6px",
+          lineHeight: 1.6,
         }}>
-          <span style={{ color: "var(--accent)", opacity: 0.7 }}>&gt;</span>
+          <span style={{ color: "var(--accent)", opacity: 0.7 }}>&gt; </span>
           <span>{typed}</span>
           <span style={{ animation: "blink 1s infinite", color: "var(--accent)" }}>▋</span>
         </div>
