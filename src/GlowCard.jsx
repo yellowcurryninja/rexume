@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const glowColorMap = {
-  green: { base: 120, spread: 30 },
+  green: { base: 120, spread: 60 },
   blue: { base: 220, spread: 200 },
   purple: { base: 280, spread: 300 },
   red: { base: 0, spread: 200 },
@@ -17,7 +17,7 @@ const beforeAfterStyles = `
     inset: calc(var(--border-size) * -1);
     border: var(--border-size) solid transparent;
     border-radius: calc(var(--radius) * 1px);
-    background-attachment: fixed;
+    background-attachment: scroll;
     background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -31,7 +31,7 @@ const beforeAfterStyles = `
       calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
       calc(var(--x, 0) * 1px)
       calc(var(--y, 0) * 1px),
-      hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 50) * 1%) / var(--border-spot-opacity, 1)), transparent 100%
+      hsl(var(--hue, 120) calc(var(--saturation, 90) * 1%) calc(var(--lightness, 55) * 1%) / var(--border-spot-opacity, 1)), transparent 100%
     );
     filter: brightness(2);
   }
@@ -72,8 +72,17 @@ export function GlowCard({
 }) {
   const cardRef = useRef(null);
   const innerRef = useRef(null);
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    // Detect touch device once on mount
+    const touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    setIsTouch(touch);
+  }, []);
+
+  useEffect(() => {
+    if (isTouch) return; // skip on mobile entirely
+
     const syncPointer = (e) => {
       const { clientX: x, clientY: y } = e;
       if (cardRef.current) {
@@ -83,11 +92,30 @@ export function GlowCard({
         cardRef.current.style.setProperty('--yp', (y / window.innerHeight).toFixed(2));
       }
     };
-    document.addEventListener('pointermove', syncPointer);
-    return () => document.removeEventListener('pointermove', syncPointer);
-  }, []);
+
+    window.addEventListener('pointermove', syncPointer, { passive: true });
+    return () => window.removeEventListener('pointermove', syncPointer);
+  }, [isTouch]);
 
   const { base, spread } = glowColorMap[glowColor] || glowColorMap.green;
+
+  // On touch devices, render a simple styled card with no glow
+  if (isTouch) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          borderRadius: '8px',
+          border: '1px solid #1e1e1e',
+          background: '#0f0f0f',
+          ...style,
+        }}
+        className={className}
+      >
+        {children}
+      </div>
+    );
+  }
 
   const inlineStyles = {
     '--base': base,
@@ -107,15 +135,15 @@ export function GlowCard({
       var(--spotlight-size) var(--spotlight-size) at
       calc(var(--x, 0) * 1px)
       calc(var(--y, 0) * 1px),
-      hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.08)), transparent
+      hsl(var(--hue, 120) calc(var(--saturation, 90) * 1%) calc(var(--lightness, 55) * 1%) / var(--bg-spot-opacity, 0.08)), transparent
     )`,
     backgroundColor: 'var(--backdrop, transparent)',
     backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
     backgroundPosition: '50% 50%',
-    backgroundAttachment: 'fixed',
+    backgroundAttachment: 'scroll',
     border: 'var(--border-size) solid var(--backup-border)',
     position: 'relative',
-    touchAction: 'none',
+    touchAction: 'pan-y',
     borderRadius: '8px',
     ...style,
   };
