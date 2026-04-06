@@ -1,5 +1,7 @@
 import { ShadowOverlay } from "./ShadowOverlay";
 import { useState, useEffect } from "react";
+import { GlowCard } from "./GlowCard";
+import { StarButton } from "./StarButton";
 
 // ─── Google Fonts ────────────────────────────────────────────────────────────
 const FontLoader = () => {
@@ -118,14 +120,18 @@ const DATA = {
 // ─── STYLES ───────────────────────────────────────────────────────────────────
 const css = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  @media (max-width: 600px) {
+    #hero { padding: 100px 24px 60px !important; }
+    #hero h1 { font-size: clamp(28px, 8vw, 68px) !important; white-space: normal !important; }
+  }
   :root {
     --bg: #080808;
     --surface: #0f0f0f;
     --border: #1e1e1e;
     --border-subtle: #141414;
-    --text: #d4d4d4;
-    --text-dim: #484848;
-    --text-muted: #787878;
+    --text: #e8e8e8;
+    --text-muted: #9a9a9a;
+    --text-dim: #5a5a5a;
     --accent: #39d353;
     --accent-dim: rgba(57,211,83,0.12);
     --accent-glow: rgba(57,211,83,0.05);
@@ -170,7 +176,7 @@ const Tag = ({ children }) => (
   <span style={{
     display: "inline-block", padding: "2px 8px",
     border: "1px solid var(--border)", borderRadius: "3px",
-    color: "var(--text-muted)", fontSize: "11px",
+    color: "var(--text)", fontSize: "11px",
     background: "transparent", fontFamily: "var(--font-mono)",
   }}>
     {children}
@@ -197,7 +203,7 @@ const SectionLabel = ({ children }) => (
     <span style={{
       fontFamily: "var(--font-display)", fontSize: "10px",
       letterSpacing: "0.22em", textTransform: "uppercase",
-      color: "var(--text-muted)",
+      color: "var(--text)",
     }}>
       {children}
     </span>
@@ -208,7 +214,8 @@ const SectionLabel = ({ children }) => (
 // ─── NAV ──────────────────────────────────────────────────────────────────────
 const Nav = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 30);
     window.addEventListener("scroll", fn);
@@ -218,36 +225,90 @@ const Nav = () => {
   const links = ["about", "skills", "experience", "projects", "education", "contact"];
 
   return (
-    <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-      padding: "0 clamp(20px, 5vw, 60px)",
-      height: "52px",
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
-      background: scrolled ? "rgba(8,8,8,0.96)" : "transparent",
-      backdropFilter: scrolled ? "blur(10px)" : "none",
-      transition: "all 0.25s",
-    }}>
-      <span style={{
-        fontFamily: "var(--font-display)", fontWeight: 800,
-        fontSize: "14px", color: "var(--accent)", letterSpacing: "0.04em",
+    <>
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        padding: "0 clamp(20px,5vw,60px)",
+        height: "52px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+        background: scrolled || open ? "rgba(8,8,8,0.97)" : "transparent",
+        backdropFilter: scrolled || open ? "blur(10px)" : "none",
+        transition: "all 0.25s",
       }}>
-        ffa<span style={{ color: "var(--text-dim)" }}>://</span>
-      </span>
-      <div style={{ display: "flex", gap: "28px" }}>
-        {links.map(l => (
-          <a key={l} href={`#${l}`} style={{
-            color: "var(--text-dim)", fontSize: "11px",
-            letterSpacing: "0.1em", transition: "color 0.15s",
+        <span style={{
+          fontFamily: "var(--font-display)", fontWeight: 800,
+          fontSize: "14px", color: "var(--accent)", letterSpacing: "0.04em",
+        }}>
+          ffa<span style={{ color: "var(--text-dim)" }}>://</span>
+        </span>
+
+        {/* Desktop links */}
+        <div style={{ display: "flex", gap: "28px" }} className="nav-desktop">
+          {links.map(l => (
+            <a key={l} href={`#${l}`} style={{
+              color: "var(--text-dim)", fontSize: "11px",
+              letterSpacing: "0.1em", transition: "color 0.15s",
+            }}
+              onMouseEnter={e => e.target.style.color = "var(--text)"}
+              onMouseLeave={e => e.target.style.color = "var(--text-dim)"}
+            >
+              {l}
+            </a>
+          ))}
+        </div>
+
+        {/* Hamburger */}
+        <button
+          className="nav-hamburger"
+          onClick={() => setOpen(!open)}
+          style={{
+            background: "none", border: "1px solid var(--border)",
+            color: "var(--text-muted)", cursor: "pointer",
+            padding: "6px 10px", borderRadius: "4px",
+            fontSize: "16px", lineHeight: 1,
+            display: "none",
           }}
-            onMouseEnter={e => e.target.style.color = "var(--text)"}
-            onMouseLeave={e => e.target.style.color = "var(--text-dim)"}
-          >
-            {l}
-          </a>
-        ))}
-      </div>
-    </nav>
+        >
+          {open ? "✕" : "☰"}
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {open && (
+        <div style={{
+          position: "fixed", top: "52px", left: 0, right: 0, zIndex: 99,
+          background: "rgba(8,8,8,0.97)",
+          borderBottom: "1px solid var(--border)",
+          padding: "12px 24px 20px",
+          display: "flex", flexDirection: "column", gap: "0",
+        }}
+          className="nav-mobile-menu"
+        >
+          {links.map(l => (
+            <a key={l} href={`#${l}`}
+              onClick={() => setOpen(false)}
+              style={{
+                color: "var(--text-muted)", fontSize: "13px",
+                letterSpacing: "0.1em", padding: "12px 0",
+                borderBottom: "1px solid var(--border-subtle)",
+                transition: "color 0.15s",
+              }}
+            >
+              <span style={{ color: "var(--accent)", marginRight: "8px" }}>//</span>{l}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* Mobile CSS */}
+      <style>{`
+        @media (max-width: 700px) {
+          .nav-desktop { display: none !important; }
+          .nav-hamburger { display: block !important; }
+        }
+      `}</style>
+    </>
   );
 };
 
@@ -309,12 +370,12 @@ const Hero = () => {
         ].map(([k, v]) => (
           <div key={k} style={{ display: "flex", gap: "12px", justifyContent: "space-between" }}>
             <span style={{ color: "var(--text-dim)" }}>{k}</span>
-            <span style={{ color: "var(--text-muted)" }}>{v}</span>
+            <span style={{ color: "var(--text)" }}>{v}</span>
           </div>
         ))}
       </div>
 
-      <div style={{ maxWidth: "740px" }}>
+      <div style={{ maxWidth: "740px", width: "100%" }}>
         <div className="fade-up" style={{ animationDelay: "0.1s", color: "var(--text-dim)", fontSize: "12px", marginBottom: "18px" }}>
           <span style={{ color: "var(--accent)" }}>$</span> whoami
         </div>
@@ -322,18 +383,16 @@ const Hero = () => {
         <h1 className="fade-up" style={{
           animationDelay: "0.2s",
           fontFamily: "var(--font-display)", fontWeight: 800,
-          fontSize: "clamp(40px, 7vw, 72px)", lineHeight: 1.0,
+          fontSize: "clamp(22px, 5.5vw, 68px)", lineHeight: 1.05,
           letterSpacing: "-0.02em", color: "#fff",
           marginBottom: "24px",
         }}>
-          {DATA.name.split(" ").map((w, i) => (
-            <span key={i} style={{ display: "block", opacity: i > 0 ? 0.82 : 1 }}>{w}</span>
-          ))}
+          {DATA.name}
         </h1>
 
         <div className="fade-up" style={{
           animationDelay: "0.3s",
-          fontSize: "13px", color: "var(--text-muted)",
+          fontSize: "13px", color: "var(--text)",
           marginBottom: "44px", minHeight: "22px",
           display: "flex", alignItems: "center", gap: "6px",
         }}>
@@ -355,7 +414,7 @@ const Hero = () => {
               display: "flex", alignItems: "center", gap: "6px",
               padding: "7px 14px",
               border: "1px solid var(--border)", borderRadius: "4px",
-              color: "var(--text-muted)", fontSize: "11px",
+              color: "var(--text)", fontSize: "11px",
               background: "var(--surface)", transition: "all 0.15s",
             }}
               onMouseEnter={e => {
@@ -364,7 +423,7 @@ const Hero = () => {
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.color = "var(--text-muted)";
+                e.currentTarget.style.color = "var(--text)";
               }}
             >
               <span style={{ color: "var(--accent)", opacity: 0.5 }}>//</span>{label}
@@ -390,10 +449,10 @@ const About = () => (
     <SectionLabel>about</SectionLabel>
     <div style={{
       display: "grid",
-      gridTemplateColumns: "1fr min(280px, 100%)",
-      gap: "56px", alignItems: "start",
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+      gap: "40px", alignItems: "start",
     }}>
-      <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 2.0 }}>
+      <p style={{ fontSize: "clamp(13px, 2vw, 14px)", color: "var(--text)", lineHeight: 1.9, wordBreak: "break-word", overflowWrap: "break-word" }}>
         {DATA.about}
       </p>
       <div style={{
@@ -415,7 +474,7 @@ const About = () => (
             fontSize: "11px",
           }}>
             <span style={{ color: "var(--text-dim)" }}>{k}</span>
-            <span style={{ color: "var(--text-muted)" }}>{v}</span>
+            <span style={{ color: "var(--text)" }}>{v}</span>
           </div>
         ))}
       </div>
@@ -433,13 +492,10 @@ const Skills = () => (
       gap: "14px",
     }}>
       {DATA.skills.map(({ category, items }) => (
-        <div key={category} style={{
-          border: "1px solid var(--border)", borderRadius: "5px",
-          padding: "20px", background: "var(--surface)",
-          transition: "border-color 0.2s",
-        }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = "#2d2d2d"}
-          onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+        <GlowCard
+          key={category}
+          glowColor="green"
+          style={{ padding: "20px" }}
         >
           <div style={{
             fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase",
@@ -450,7 +506,7 @@ const Skills = () => (
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
             {items.map(item => <Tag key={item}>{item}</Tag>)}
           </div>
-        </div>
+        </GlowCard>
       ))}
     </div>
   </section>
@@ -462,49 +518,85 @@ const Experience = () => (
     <SectionLabel>experience</SectionLabel>
     <div>
       {DATA.experience.map((exp, i) => (
-        <div key={i} style={{ display: "flex", gap: "28px", marginBottom: i < DATA.experience.length - 1 ? "0" : "0" }}>
+        <div key={i} style={{ display: "flex", gap: "20px", marginBottom: i < DATA.experience.length - 1 ? "0" : "0" }}>
+
           {/* Timeline spine */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "4px" }}>
             <div style={{
-              width: "9px", height: "9px", borderRadius: "50%", marginTop: "4px",
-              border: exp.current ? "2px solid var(--accent)" : "1px solid var(--border)",
-              background: exp.current ? "rgba(57,211,83,0.15)" : "var(--bg)",
-              boxShadow: exp.current ? "0 0 10px rgba(57,211,83,0.3)" : "none",
+              width: "10px", height: "10px", borderRadius: "50%",
+              border: exp.current ? "2px solid var(--accent)" : "1px solid #333",
+              background: exp.current ? "rgba(57,211,83,0.2)" : "#111",
+              boxShadow: exp.current ? "0 0 12px rgba(57,211,83,0.4)" : "none",
               flexShrink: 0,
             }} />
             {i < DATA.experience.length - 1 && (
-              <div style={{ width: "1px", flex: 1, background: "var(--border)", margin: "6px 0" }} />
+              <div style={{ width: "1px", flex: 1, background: "linear-gradient(to bottom, #333, transparent)", margin: "8px 0" }} />
             )}
           </div>
 
-          {/* Content */}
-          <div style={{ paddingBottom: i < DATA.experience.length - 1 ? "44px" : "0", flex: 1 }}>
+          {/* Card */}
+          <div style={{
+            flex: 1,
+            paddingBottom: i < DATA.experience.length - 1 ? "48px" : "0",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "20px 24px",
+            background: "var(--surface)",
+            marginBottom: i < DATA.experience.length - 1 ? "16px" : "0",
+          }}>
+            {/* Header */}
             <div style={{
               display: "flex", justifyContent: "space-between",
-              alignItems: "flex-start", marginBottom: "8px", flexWrap: "wrap", gap: "8px",
+              alignItems: "flex-start", flexWrap: "wrap", gap: "6px",
+              marginBottom: "6px",
             }}>
               <div>
-                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "15px", color: "#fff" }}>
+                <div style={{
+                  fontFamily: "var(--font-display)", fontWeight: 700,
+                  fontSize: "15px", color: "#fff", lineHeight: 1.3,
+                }}>
                   {exp.company}
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--accent)", marginTop: "2px" }}>
+                <div style={{
+                  fontSize: "12px", color: "var(--accent)",
+                  marginTop: "3px", display: "flex", alignItems: "center", gap: "8px",
+                }}>
                   {exp.role}
+                  {exp.current && (
+                    <span style={{
+                      fontSize: "10px", padding: "1px 7px",
+                      border: "1px solid rgba(57,211,83,0.3)",
+                      borderRadius: "20px", color: "var(--accent)",
+                      background: "rgba(57,211,83,0.06)",
+                    }}>
+                      current
+                    </span>
+                  )}
                 </div>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "11px", color: "var(--text-dim)" }}>{exp.period}</div>
-                <div style={{ fontSize: "10px", color: "var(--text-dim)", marginTop: "2px" }}>{exp.location}</div>
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ fontSize: "11px", color: "var(--text-dim)", background: "#161616", padding: "3px 10px", borderRadius: "4px", border: "1px solid var(--border)" }}>
+                  {exp.period}
+                </div>
+                <div style={{ fontSize: "10px", color: "var(--text-dim)", marginTop: "4px" }}>
+                  {exp.location}
+                </div>
               </div>
             </div>
+
+            {/* Divider */}
+            <div style={{ height: "1px", background: "var(--border)", margin: "14px 0" }} />
+
+            {/* Bullets */}
             <ul style={{ listStyle: "none" }}>
               {exp.bullets.map((b, j) => (
                 <li key={j} style={{
-                  fontSize: "12px", color: "var(--text-muted)",
-                  paddingLeft: "16px", position: "relative",
-                  marginBottom: "4px", lineHeight: 1.8,
+                  display: "flex", gap: "10px",
+                  fontSize: "12px", color: "var(--text)",
+                  marginBottom: "8px", lineHeight: 1.8,
                 }}>
-                  <span style={{ position: "absolute", left: 0, color: "var(--accent)", opacity: 0.4 }}>›</span>
-                  {b}
+                  <span style={{ color: "var(--accent)", opacity: 0.5, flexShrink: 0, marginTop: "1px" }}>›</span>
+                  <span>{b}</span>
                 </li>
               ))}
             </ul>
@@ -525,19 +617,12 @@ const Projects = () => (
       gap: "14px",
     }}>
       {DATA.projects.map((p, i) => (
-        <div key={i} style={{
-          border: "1px solid var(--border)", borderRadius: "5px",
-          padding: "22px", background: "var(--surface)",
-          display: "flex", flexDirection: "column", gap: "12px",
-          transition: "border-color 0.2s, transform 0.2s",
-        }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = "rgba(57,211,83,0.22)";
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = "var(--border)";
-            e.currentTarget.style.transform = "translateY(0)";
+        <GlowCard
+          key={i}
+          glowColor="green"
+          style={{
+            padding: "22px",
+            display: "flex", flexDirection: "column", gap: "12px",
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -547,29 +632,13 @@ const Projects = () => (
             }}>
               {p.name}
             </div>
-            {p.link && (
-              <a href={p.link} style={{
-                fontSize: "12px", color: "var(--text-dim)",
-                padding: "2px 7px", border: "1px solid var(--border)",
-                borderRadius: "3px", flexShrink: 0, marginLeft: "10px",
-                transition: "color 0.15s, border-color 0.15s",
-              }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = "var(--accent)";
-                  e.currentTarget.style.borderColor = "rgba(57,211,83,0.3)";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = "var(--text-dim)";
-                  e.currentTarget.style.borderColor = "var(--border)";
-                }}
-              >↗</a>
-            )}
+            {p.link && <a href={p.link} style={{ fontSize: "12px", color: "var(--text-dim)", padding: "2px 7px", border: "1px solid var(--border)", borderRadius: "3px" }}>↗</a>}
           </div>
-          <p style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.8, flex: 1 }}>{p.desc}</p>
+          <p style={{ fontSize: "12px", color: "var(--text)", lineHeight: 1.8, flex: 1 }}>{p.desc}</p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
             {p.tech.map(t => <AccentTag key={t}>{t}</AccentTag>)}
           </div>
-        </div>
+        </GlowCard>
       ))}
     </div>
   </section>
@@ -600,7 +669,7 @@ const Education = () => (
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "14px", color: "#fff" }}>
               {e.institution}
             </div>
-            <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>{e.degree}</div>
+            <div style={{ fontSize: "12px", color: "var(--text)", marginTop: "4px" }}>{e.degree}</div>
             <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "6px" }}>
               {e.period} · {e.location}
             </div>
@@ -653,20 +722,12 @@ const Contact = () => (
       gap: "56px", alignItems: "start",
     }}>
       <div>
-        <p style={{ fontSize: "14px", color: "var(--text-muted)", lineHeight: 2.0, marginBottom: "30px" }}>
+        <p style={{ fontSize: "14px", color: "var(--text)", lineHeight: 2.0, marginBottom: "30px" }}>
           Open to IT and network engineering roles in Brisbane. If you're hiring, building something interesting, or just want to talk networking — send a message.
         </p>
-        <a href={`mailto:${DATA.email}`} style={{
-          display: "inline-flex", alignItems: "center", gap: "8px",
-          padding: "10px 20px", border: "1px solid var(--accent)",
-          borderRadius: "4px", color: "var(--accent)", fontSize: "12px",
-          background: "var(--accent-glow)", transition: "background 0.15s",
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = "var(--accent-dim)"}
-          onMouseLeave={e => e.currentTarget.style.background = "var(--accent-glow)"}
-        >
+        <StarButton href={`mailto:${DATA.email}`}>
           → send email
-        </a>
+        </StarButton>
       </div>
 
       <div style={{
@@ -688,8 +749,8 @@ const Contact = () => (
           }}>
             <span style={{ color: "var(--text-dim)" }}>{k}</span>
             {href
-              ? <a href={href} style={{ color: "var(--text-muted)" }}>{v}</a>
-              : <span style={{ color: "var(--text-muted)" }}>{v}</span>}
+              ? <a href={href} style={{ color: "var(--text)" }}>{v}</a>
+              : <span style={{ color: "var(--text)" }}>{v}</span>}
           </div>
         ))}
       </div>
