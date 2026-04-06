@@ -28,12 +28,12 @@ const DATA = {
   about:
     "Entry-level IT professional with hands-on experience supporting campus IT operations and building practical skills through a personal HomeLab running DNS, storage, and server services on Proxmox. Currently completing a Bachelor of Cyber Security at Griffith University while studying toward CCNA certification. I build tools, automate things that shouldn't require manual work, and care about how networks actually function under the hood.",
   skills: [
-    { category: "Networking", items: ["TCP/IP", "DNS", "DHCP", "Wireshark", "CCNA (in progress)"] },
-    { category: "Operating Systems", items: ["Linux (Debian, RHEL)", "Windows Server", "macOS"] },
+    { category: "Networking", items: ["TCP/IP", "DNS", "DHCP", "Wireshark", "CCNA", "VLANs", "Subnetting", "OSI", "ACLs"] },
+    { category: "Leadership & Operations", items: ["Stakeholder Communication", "Cross-functional Collaboration", "Decision Making", "Initiative", "Adaptability", "Workflow Optimization"] },
     { category: "Programming", items: ["Python", "JavaScript", "C#", "SQL", "Assembly"] },
-    { category: "Security", items: ["SIEM Tools", "Threat Detection", "QA Testing", "System Hardening"] },
+    { category: "Security", items: ["SIEM Tools", "Threat Detection", "QA Testing", "System Hardening", "Log Analysis", "Firewall Management", "Security Policies"] },
     { category: "Infrastructure", items: ["Proxmox VE", "Virtualization", "HomeLab", "Self-hosted Services"] },
-    { category: "Tools", items: ["Jira", "Selenium", "Google Sheets API", "GitHub Actions", "Bash"] },
+    { category: "Tools", items: ["Jira", "Selenium", "Google Sheets API", "GitHub Actions", "Bash", "PuTTY", "Docker"] },
   ],
   experience: [
     {
