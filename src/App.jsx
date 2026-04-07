@@ -110,7 +110,7 @@ const DATA = {
     },
   ],
   certifications: [
-    { name: "CCNA", issuer: "Cisco", year: "In Progress", active: true },
+    { name: "CCNA", issuer: "Cisco", year: "2026", active: true },
     { name: "Google IT Support Professional", issuer: "Google", year: "2023", active: false },
     { name: "CS50: Introduction to Cybersecurity", issuer: "Harvard / edX", year: "2024", active: false },
     { name: "CS50: CS for Business Professionals", issuer: "Harvard / edX", year: "2024", active: false },
@@ -467,7 +467,7 @@ const About = () => (
         {[
           ["degree", "B. Cyber Security"],
           ["uni", "Griffith University"],
-          ["cert", "CCNA (studying)"],
+          ["cert", "CCNA"],
           ["lab", "Proxmox + Debian VMs"],
           ["ielts", "English C1"],
           ["base", "Brisbane, AU"],
@@ -702,7 +702,7 @@ const Education = () => (
                 display: "flex", alignItems: "center", gap: "8px",
               }}>
                 {c.name}
-                {c.active && <AccentTag>studying</AccentTag>}
+                
               </div>
               <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" }}>{c.issuer}</div>
             </div>
